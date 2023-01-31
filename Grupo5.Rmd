@@ -1,0 +1,356 @@
+---
+title: "Casos de Covid-19 nos Estados Unidos da América"
+author: João José Lopes Cheixo (PG49837) Márcia Filipa Gonçalves Oliveira (PG49841) Mariana Rochinha Braguês (PG49843)
+date: "`r Sys.Date()`"
+output:
+  html_document: default
+---
+
+### [**Exercício prático de Métodos Estatísticos para a Bioinformática**]{.smallcaps}
+
+#### Introdução:
+
+Deparado com o impacto global da COVID-19 e para uma melhor compreensão do mesmo, foi desenvolvido um estudo estatístico, utilizando o programa *RStudio* em linguagem R. Para isso, foram recolhidos dados na base "*Google dataset search*".
+
+Posto isto, os dados recolhidos correspondem aos diversos estados pertencentes aos Estados Unidos da América (EUA), nomeadamente, ao número de infetados e de mortes associados à Covid-19, ao número total de habitantes, assim como, a média de idades dos mesmos. Estes dizem respeito ao dia 11/01/2023.
+
+Este estudo estatístico visa encontrar relações entre a taxa de mortes com a taxa de infetados e/ou a idade da população dos EUA.
+
+#### Variáveis:
+
+-   **Estados** - variável qualitativa que categoriza os diferentes estados dos EUA;
+
+-   **Taxa de infetados** (Número de casos de infetados dividido pelo número total de habitantes de cada estado) - variável quantitativa contínua que corresponde aos casos confirmados de Covid-19 para cada estado;
+
+-   **Taxa de mortes** (Número de mortes dividido pelo número total de habitantes de cada estado) - variável quantitativa contínua que corresponde aos casos de óbito por Covid-19;
+
+-   **Idade** - variável quantitativa contínua que corresponde à idade média dos habitantes de cada estado.
+
+#### Análise exploratória das variáveis:
+
+Importação e respetiva leitura do ficheiro 'covid'.
+
+```{r}
+covid=read.csv('covid.csv') #leitura de dados
+```
+
+Estados dos EUA.
+
+```{r Covid19}
+estado = covid$Estado
+estado
+```
+
+Valores da taxa de infetados por Covid-19 nos EUA.
+
+```{r}
+taxa_infetados = (covid$Infetados)/(covid$Populacao)
+taxa_infetados
+```
+
+Valores da taxa de mortes por Covid-19 nos EUA.
+
+```{r}
+taxa_mortes = (covid$Mortes)/(covid$Populacao)
+taxa_mortes
+```
+
+Valores da média de idades da população por estado.
+
+```{r}
+idade = covid$Media_Idades
+idade
+```
+
+### Estatística descritiva das variáveis
+
+**Variável taxa_infetados:**
+
+```{r}
+mean(taxa_infetados)                 #média                                 
+median(taxa_infetados)               #mediana
+min(taxa_infetados)                  #mínimo
+max(taxa_infetados)                  #máximo
+diff(range(taxa_infetados))          #amplitude                         
+sd(taxa_infetados)                   #desvio-padrão                         
+var(taxa_infetados)                  #variância                         
+fivenum(taxa_infetados)              #resumo de 5 números
+summary(taxa_infetados)              #resumo de 5 números
+IQR(taxa_infetados)                  #distância interquartílica
+```
+
+Representação gráfica da taxa de infetados
+
+```{r}
+hist(taxa_infetados, main="Infetados por Covid-19 nos EUA ",xlab="Taxa de infetados")
+```
+
+Caixa de bigodes da taxa de infetados
+
+```{r}
+boxplot(taxa_infetados,xlab="Taxa de infetados por Covid-19")
+```
+
+Relativamente ao histograma mencionado acima, é possível observar que a taxa de infetados mais frequente está contida entre os valores 0.30 e 0.35. A caixa de bigodes apresenta o primeiro quartil que é 0.31, a mediana igual a 0.35 e o terceiro quartil de 0.39.
+
+**Variável taxa_mortes:**
+
+```{r}
+mean(taxa_mortes)                    #média                                 
+median(taxa_mortes)                  #mediana
+min(taxa_mortes)                     #mínimo
+max(taxa_mortes)                     #máximo
+diff(range(taxa_mortes))             #amplitude                      
+sd(taxa_mortes)                      #desvio-padrão
+var(taxa_mortes)                     #variância                       
+fivenum(taxa_mortes)                 #resumo de 5 números
+summary(taxa_mortes)                 #resumo de 5 números
+IQR(taxa_mortes)                     #distância interquartílica
+```
+
+Representação gráfica da taxa de mortes
+
+```{r}
+hist(taxa_mortes, main="Mortes por Covid-19 nos EUA ",xlab="Taxa de mortes")
+```
+
+Caixa de bigodes da taxa de mortes
+
+```{r}
+boxplot(taxa_mortes,xlab="Taxa de mortes por Covid-19")
+```
+
+Relativamente ao histograma mencionado acima, é possível observar que a taxa de mortes mais frequente está contida entre os valores 0.004 e 0.005. A caixa de bigodes apresenta o primeiro quartil que é 0.003, a mediana igual a 0.004 e o terceiro quartil de 0.0044.
+
+**Variável idade:**
+
+```{r}
+mean(idade)                            #média               
+median(idade)                          #mediana
+min(idade)                             #mínimo
+max(idade)                             #máximo
+diff(range(idade))                     #amplitude               
+sd(idade)                              #desvio-padrão                                   
+var(idade)                             #variância              
+fivenum(idade)                         #resumo de 5 números
+summary(idade)                         #resumo de 5 números
+IQR(idade)                             #distância interquartílica
+```
+
+Representação gráfica da média de idades
+
+```{r}
+hist(idade, main="Média de idades nos EUA",xlab="Idades")
+```
+
+Caixa de bigodes da média de idades
+
+```{r}
+boxplot(idade,xlab="Média de idades")
+```
+
+Relativamente ao histograma apresentado, é possível observar que a média de idades mais frequente está contida entre os valores 34 a 36 anos. A caixa de bigodes mostra o primeiro quartil que é 35, a mediana igual a 36 e o terceiro quartil de 36.3 anos. Além disso, consegue-se perceber a existência de vários "*outliers"*.
+
+**Gráficos que relacionam as variáveis:**
+
+Representação gráfica da taxa de infetados por estado
+
+```{r}
+barplot(taxa_infetados,names.arg=estado,          
+        xlab="Estados",ylab="Taxa de infetados", cex.names=0.6, las=2, col=c(4))
+```
+
+Representação gráfica da taxa de mortes por estado
+
+```{r}
+barplot(taxa_mortes,names.arg=estado,          
+        xlab="Estados",ylab="Taxa de mortes", cex.names=0.6, las=2, col=c(7))
+```
+
+Representação gráfica da média de idades por estado
+
+```{r}
+barplot(idade,names.arg=estado, xlab="Estados",ylab="Média de idades", cex.names=0.6, las=2, col=c(6))       
+```
+
+### Teste de normalidade das variáveis
+
+**Variável taxa_infetados:**
+
+H0: A variável taxa_infetados segue uma distribuição normal.
+
+H1: A variável taxa_infetados não segue uma distribuição normal.
+
+```{r}
+shapiro.test(taxa_infetados)
+```
+
+Após a realização do teste de normalidade *Shapiro-Wilk*, como o valor-p = 0.3011 que é superior ao valor de *alpha* (0.05), não se rejeita H0. Pelo que, considera-se que a variável taxa_infetados segue uma distribuição normal.
+
+**Variável taxa_mortes:**
+
+H0: A variável taxa_mortes segue uma distribuição normal.
+
+H1: A variável taxa_mortes não segue uma distribuição normal.
+
+```{r}
+shapiro.test(taxa_mortes)
+```
+
+Após a aplicação do teste de normalidade *Shapiro-Wilk,* como o valor-p = 0.6923 que é superior ao valor de *alpha* (0.05), não se rejeita H0. Pelo que, considera-se que a variável taxa_mortes segue uma distribuição normal.
+
+**Variável idade:**
+
+H0: A variável idade segue uma distribuição normal.
+
+H1: A variável idade não segue uma distribuição normal.
+
+```{r}
+shapiro.test(idade)
+```
+
+Depois da realização do teste de normalidade *Shapiro-Wilk, c*omo o valor-p = 5.775e-05 que é inferior ao valor de *alpha* (0.05), rejeita-se H0. Sendo que, considera-se que a variável idade não segue uma distribuição normal.
+
+### Testes de associações entre variáveis
+
+**Variável taxa_infetados e variável taxa_mortes:**
+
+H0: Não existe uma correlação signficativa entre a taxa de infetados e a taxa de mortes.
+
+H1: Existe uma correlação signficativa entre a taxa de infetados e a taxa de mortes.
+
+```{r}
+cor(taxa_infetados,taxa_mortes)            #valor do coeficiente de correlação
+
+cor.test(taxa_infetados,taxa_mortes)       #teste de correlação
+```
+
+Após a realização do teste de correlação *Pearson,* sendo o valor-p = 0.0001869 inferior ao valor de *alpha* (0.05), rejeita-se H0. Posto isto, pode inferir-se que a correlação entre as variáveis taxa_infetados e taxa_mortes é significativa.
+
+Relativamente ao valor do coeficiente de correlação, como este é igual a 0.500033 (valor positivo) corresponde a uma associação positiva linear.
+
+**Variável taxa_infetados e variável idade:**
+
+H0: Não existe uma correlação signficativa entre a taxa de infetados e a idade.
+
+H1: Existe uma correlação signficativa entre a taxa de infetados e a idade.
+
+```{r}
+cor.test(taxa_infetados,idade,method="spearman", exact=FALSE)    #teste de correlação
+```
+
+Após a realização do teste de correlação *Spearman*, como o valor-p = 0.01303 que é inferior ao valor de *alpha* (0.05), rejeita-se H0. Sendo que, pode-se concluir que existe uma correlação significativa entre as variáveis taxa_infetados e a idade.
+
+O valor de coeficiente de correlação é igual a -0.3454616 (valor negativo), existindo uma associação monótona negativa.
+
+**Variável taxa_mortes e variável idade:**
+
+H0: Não existe uma correlação signficativa entre a taxa de mortes e a idade.
+
+H1: Existe uma correlação signficativa entre a taxa de mortes e a idade.
+
+```{r}
+cor.test(taxa_mortes,idade,method="spearman", exact=FALSE)       #teste de correlação
+```
+
+Depois da aplicação do teste de correlação *Spearman*, como o valor-p = 0.4032 que é superior ao valor de *alpha* (0.05), não se rejeita H0. Pelo que, não existem evidências que não existe uma associação significativa entre a taxa_mortes e a idade.
+
+\
+
+### Modelo de regressão
+
+A taxa_mortes vai corresponder a uma variável dependente, enquanto que a taxa_infetados e idade vão ser variáveis independentes (preditoras).
+
+Gráfico de dispersão que relaciona a taxa de infetados com a taxa de mortes
+
+```{r}
+plot(taxa_infetados,taxa_mortes,pch=16)     #gráfico de dispersão
+```
+
+Gráfico de dispersão que relaciona a idade com a taxa de mortes
+
+```{r}
+plot(idade,taxa_mortes,pch=16)                       #gráfico de dispersão
+```
+
+Segundo o gráfico de dispersão que relaciona a taxa de infetados com a taxa de mortes, é possível observar que à medida que a taxa de infetados aumenta, a taxa de mortes também aumenta. Por outro lado, o gráfico que relaciona a idade com a taxa de mortes sugere que os valores da taxa de mortes concentram-se entre os valores de 34 e 38 anos.
+
+**Modelo de regressão linear múltipla:**
+
+Com o intuito de estudar a taxa de mortes em função da taxa de infetados e da idade, foi aplicado o modelo de regressão linear múltipla.
+
+```{r}
+model = lm(taxa_mortes ~ taxa_infetados+idade)        #coeficientes de regressão
+summary(model)                     
+```
+
+```{r}
+par(mfrow=c(2,2))                       
+plot(model)                                #gráficos de resíduos 
+```
+
+A equação que traduz este modelo é y = 1.088e-02x1 + 1.674e-04x2 -6.055e-03, sendo:
+
+-   β0 = -6.055e-03
+
+-   β1x1 =1.088e-02, x1 é a variável taxa_infetados
+
+-   β2x2 = 1.674e-04, x2 é a variável idade
+
+[Teste ao declive:]{.underline}
+
+H0: Não existe uma relação linear significativa entre a taxa de mortes e a taxa de infetados (β1 = 0).
+
+H1: Existe uma relação linear significativa entre a taxa de mortes e a taxa de infetados (β1 ≠ 0).
+
+Como o valor-p de β1 = 1.8e-0.5 é inferior ao valor de *alpha* (0.05), rejeita-se H0. Assim sendo, existe uma relação linear significativa entre a taxa de mortes e a taxa de infetados.
+
+H0: Não existe uma relação linear significativa entre a taxa de mortes e a idade (β2 = 0).
+
+H1: Existe uma relação linear significativa entre a taxa de mortes e a idade (β2 ≠ 0).
+
+Como o valor-p de β2 = 0.0295 é inferior ao valor de *alpha* (0.05), rejeita-se H0. Assim sendo, existe uma relação linear significativa entre a taxa de mortes e a idade.
+
+[Coeficiente de determinação:]{.underline}
+
+O coeficiente de determinação é igual a 0.3212, pelo que, a proporção de variabilidade da taxa de mortes explicada pelo modelo é de apenas 32.1%. O coeficiente de determinação ajustado é de 0.2929. O gráfico de resíduos apresentado acima indica que os resíduos não são aleatórios e não tem variância constante, sendo que, este modelo não se considera adequado.
+
+Caso o modelo fosse adequado, poderia-se utilizar a equação obtida para prever a taxa de mortes.
+
+Em seguida, segue-se um possível exemplo de uma previsão da taxa de mortes quando a taxa de infetados é 0.4 e a idade é 28 anos.
+
+```{r}
+predict(model, list(taxa_infetados=0.4, idade=28))        #previsão de valores
+```
+
+\
+
+Como o modelo de regressão linear múltiplo apresentado anteriormente não era adequado, foi testado um modelo linear simples para estudar a taxa de mortes em função da taxa de infetados.
+
+```{r}
+model2 = lm(taxa_mortes ~ taxa_infetados)       #coeficientes de regressão
+summary(model2)    
+```
+
+```{r}
+par(mfrow=c(2,2))                       
+plot(model2) 
+```
+
+A equação que traduz este modelo é y = 0.0086216x + 0.0006878, sendo:
+
+-   β0 = 0.0006878
+
+-   β1 = 0.00862162
+
+O coeficiente de determinação é igual a 0.25, pelo que, a proporção de variabilidade da taxa de mortes explicada pelo modelo é de apenas 25%. O coeficiente de determinação ajustado é de 0.2347. O gráfico de resíduos apresentado acima indica que os resíduos não são aleatórios e não tem variância constante, sendo que, este modelo não se considerado aplicado.
+
+O coeficiente de determinação ajustado deste modelo linear simples (model2) é inferior ao coeficiente do modelo de regressão linear múltiplo, logo o model2 é ainda menos explicativo.
+
+### Conclusão
+
+Em suma, nos testes usados para estudar a associação entre variáveis taxa de infetados e taxa de mortes, assim como, taxa de infetados e idade, observou-se que existe uma correlação significativa entre elas. No entanto, não existem evidências que não exista uma associação significativa entre a taxa de mortes e a idade.
+
+Relativamente aos modelos de regressão linear, pode-se concluir que nenhum dos dois modelos é adequado a estes dados. Outra possibilidade para desenvolver este estudo seria utilizar outros tipos de modelos.
+
+Além disso, estes resultados podem ser justificados pela existência de fatores que não estão a ser tidos em conta, tais como, a possibilidade das mortes por Covid-19 não terem sido todas contabilizadas, ou as que foram não estarem associadas somente a esta infeção, registo erróneo dos casos confirmados, entre outros.
